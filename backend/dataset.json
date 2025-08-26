@@ -1,0 +1,7 @@
+[
+  { "input": { "a": 12, "b": 8, "op": "add" }, "expected": 20 },
+  { "input": { "a": 15, "b": 4, "op": "sub" }, "expected": 11 },
+  { "input": { "a": 7,  "b": 6, "op": "mul" }, "expected": 42 },
+  { "input": { "a": 20, "b": 5, "op": "div" }, "expected": 4 },
+  { "input": { "a": 10, "b": 0, "op": "div" }, "expected": null }
+]
