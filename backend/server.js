@@ -1,5 +1,17 @@
+
 const express = require('express');
 const app = express();
+
+// ✅ Calculation logic (exported for tests)
+function calc(a, b, op) {
+  switch (op) {
+    case 'add': return a + b;
+    case 'sub': return a - b;
+    case 'mul': return a * b;
+    case 'div': return b === 0 ? null : a / b;
+    default: return null;
+  }
+}
 
 // Homepage Route
 app.get('/', (req, res) => {
@@ -51,7 +63,7 @@ app.get('/contact', (req, res) => {
   `);
 });
 
-// ✅ Dynamic Greeting Route
+// Dynamic Greeting Route
 app.get('/greet/:name', (req, res) => {
   const userName = req.params.name;
   res.send(`
@@ -64,17 +76,7 @@ app.get('/greet/:name', (req, res) => {
   `);
 });
 
-// 🧠 Chain-of-Thought Style Demo (brief, numbered steps)
-function calc(a, b, op) {
-  switch (op) {
-    case 'add': return a + b;
-    case 'sub': return a - b;
-    case 'mul': return a * b;
-    case 'div': return b === 0 ? null : a / b;
-    default: return null;
-  }
-}
-
+// Chain-of-Thought Demo Route
 app.get('/solve', (req, res) => {
   const a = Number(req.query.a);
   const b = Number(req.query.b);
@@ -87,23 +89,12 @@ app.get('/solve', (req, res) => {
       <p style="text-align:center;">
         /solve?a=12&b=8&op=add | sub | mul | div
       </p>
-      <div style="text-align:center; margin-top:10px;">
-        <a href="/solve?a=12&b=8&op=add">Try: add</a> •
-        <a href="/solve?a=15&b=4&op=sub">sub</a> •
-        <a href="/solve?a=7&b=6&op=mul">mul</a> •
-        <a href="/solve?a=20&b=5&op=div">div</a>
-      </div>
     `);
   }
 
   const result = calc(a, b, op);
   if (result === null) {
-    return res.send(`
-      <h2 style="text-align:center;">❗ Cannot divide by zero</h2>
-      <div style="text-align:center; margin-top:10px;">
-        <a href="/solve?a=20&b=5&op=div">Try valid division</a>
-      </div>
-    `);
+    return res.send(`<h2 style="text-align:center;">❗ Cannot divide by zero</h2>`);
   }
 
   const steps = [
@@ -124,11 +115,17 @@ app.get('/solve', (req, res) => {
   `);
 });
 
-// Start server
-app.listen(3000, () => {
-  console.log('✅ AIBUDDY Server is live at: http://localhost:3000');
-  console.log('👉 About page:   http://localhost:3000/about');
-  console.log('👉 Contact page: http://localhost:3000/contact');
-  console.log('👉 Dynamic greet: http://localhost:3000/greet/Akarshana');
-  console.log('👉 CoT demo:     http://localhost:3000/solve?a=12&b=8&op=add');
-});
+// Only start server when this file is run directly (so tests can require calc without starting the server)
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log('✅ AIBUDDY Server is live at: http://localhost:3000');
+    console.log('👉 About page:   http://localhost:3000/about');
+    console.log('👉 Contact page: http://localhost:3000/contact');
+    console.log('👉 Dynamic greet: http://localhost:3000/greet/Akarshana');
+    console.log('👉 CoT demo:     http://localhost:3000/solve?a=12&b=8&op=add');
+  });
+}
+
+// Export calculation logic for tests
+module.exports = { calc };
+
