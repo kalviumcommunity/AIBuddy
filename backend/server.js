@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 
@@ -26,7 +25,8 @@ app.get('/', (req, res) => {
       <a href="/about" style="font-size:16px; text-decoration:none; color:blue;">👉 Go to About Page</a><br/>
       <a href="/contact" style="font-size:16px; text-decoration:none; color:green;">👉 Go to Contact Page</a><br/>
       <a href="/greet/Student" style="font-size:16px; text-decoration:none; color:orange;">👉 Try Dynamic Greeting</a><br/>
-      <a href="/solve?a=12&b=8&op=add" style="font-size:16px; text-decoration:none; color:crimson;">🧠 Try Chain-of-Thought Demo</a>
+      <a href="/solve?a=12&b=8&op=add" style="font-size:16px; text-decoration:none; color:crimson;">🧠 Try Chain-of-Thought Demo</a><br/>
+      <a href="/multishot" style="font-size:16px; text-decoration:none; color:teal;">🤖 Try Multi-Shot Prompting Demo</a>
     </div>
   `);
 });
@@ -115,7 +115,39 @@ app.get('/solve', (req, res) => {
   `);
 });
 
-// Only start server when this file is run directly (so tests can require calc without starting the server)
+// ✅ Multi-Shot Prompting Demo Route
+app.get('/multishot', (req, res) => {
+  const examples = [
+    { input: "Translate 'Hello' to Spanish", output: "Hola" },
+    { input: "Translate 'Thank you' to Spanish", output: "Gracias" },
+    { input: "Translate 'Good night' to Spanish", output: "Buenas noches" }
+  ];
+
+  const newTask = "Translate 'How are you?' to Spanish";
+  const newOutput = "¿Cómo estás?";
+
+  res.send(`
+    <h2 style="color: teal; text-align: center; margin-top: 40px;">🤖 Multi-Shot Prompting</h2>
+    <p style="text-align:center; font-size:18px;">
+      Multi-shot prompting gives the AI <b>multiple examples</b> (not just one) 
+      so it can better understand the task before solving a new one.
+    </p>
+    <h3 style="text-align:center;">📌 Examples</h3>
+    <pre style="max-width:600px; margin:10px auto; padding:12px; border:1px solid #ddd; border-radius:8px; font-size:16px;">
+${examples.map(ex => `Input: ${ex.input}\nOutput: ${ex.output}\n`).join("\n")}
+    </pre>
+    <h3 style="text-align:center;">✨ New Task</h3>
+    <pre style="max-width:600px; margin:10px auto; padding:12px; border:1px solid #aaa; border-radius:8px; font-size:16px;">
+Input: ${newTask}
+Output: ${newOutput}
+    </pre>
+    <div style="text-align:center; margin-top:20px;">
+      <a href="/" style="text-decoration:none; color:purple;">🔙 Back to Home</a>
+    </div>
+  `);
+});
+
+// Only start server when this file is run directly
 if (require.main === module) {
   app.listen(3000, () => {
     console.log('✅ AIBUDDY Server is live at: http://localhost:3000');
@@ -123,9 +155,9 @@ if (require.main === module) {
     console.log('👉 Contact page: http://localhost:3000/contact');
     console.log('👉 Dynamic greet: http://localhost:3000/greet/Akarshana');
     console.log('👉 CoT demo:     http://localhost:3000/solve?a=12&b=8&op=add');
+    console.log('👉 Multi-shot:   http://localhost:3000/multishot');
   });
 }
 
 // Export calculation logic for tests
 module.exports = { calc };
-
